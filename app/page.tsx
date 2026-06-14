@@ -1,101 +1,91 @@
-import Image from "next/image";
+import { createClient } from '@/lib/supabase/server'
+import CatCard from '@/components/CatCard'
+import { Cat } from '@/types'
+import Link from 'next/link'
+import { ArrowRight, Heart, Shield, Star } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
-export default function Home() {
+export const revalidate = 60
+
+export default async function HomePage() {
+  const supabase = await createClient()
+  const { data: cats } = await supabase
+    .from('cats')
+    .select('*, profiles(full_name)')
+    .eq('is_available', true)
+    .order('created_at', { ascending: false })
+    .limit(8)
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div>
+      {/* Hero */}
+      <section className="text-center py-16 mb-12">
+        <div className="inline-flex items-center gap-2 bg-orange-50 text-orange-600 px-4 py-1.5 rounded-full text-sm font-medium mb-6">
+          <span>🐱</span> Платформа аренды котов №1 в России
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 leading-tight">
+          Возьми кота на<br />
+          <span className="text-orange-500">выходные</span>
+        </h1>
+        <p className="text-gray-500 text-lg max-w-xl mx-auto mb-8">
+          Найди пушистого компаньона рядом с домом или сдай своего кота и помоги ему найти временную семью
+        </p>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Link href="/dashboard/renter">
+            <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white gap-2">
+              Найти кота <ArrowRight className="w-4 h-4" />
+            </Button>
+          </Link>
+          <Link href="/signup">
+            <Button size="lg" variant="outline" className="gap-2">
+              Сдать кота
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
+        {[
+          { icon: Heart, title: 'С любовью', text: 'Все коты проверены и любят людей' },
+          { icon: Shield, title: 'Безопасно', text: 'Подробная информация о питомце и хозяине' },
+          { icon: Star, title: 'Просто', text: 'Выбери, запроси и встреться с котом' },
+        ].map(({ icon: Icon, title, text }) => (
+          <div key={title} className="bg-white rounded-2xl p-6 border border-gray-100 text-center">
+            <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mx-auto mb-3">
+              <Icon className="w-6 h-6 text-orange-500" />
+            </div>
+            <h3 className="font-semibold text-gray-900 mb-1">{title}</h3>
+            <p className="text-sm text-gray-500">{text}</p>
+          </div>
+        ))}
+      </section>
+
+      {/* Cats grid */}
+      <section>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-gray-900">Доступные коты</h2>
+          <Link href="/dashboard/renter" className="text-orange-500 hover:text-orange-600 text-sm font-medium flex items-center gap-1">
+            Все коты <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+
+        {cats && cats.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {cats.map((cat: Cat) => (
+              <CatCard key={cat.id} cat={cat} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
+            <div className="text-5xl mb-4">🐱</div>
+            <p className="text-gray-500">Пока нет доступных котов.</p>
+            <Link href="/signup" className="text-orange-500 hover:underline text-sm mt-2 inline-block">
+              Стань первым хозяином!
+            </Link>
+          </div>
+        )}
+      </section>
     </div>
-  );
+  )
 }
