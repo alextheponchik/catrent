@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Cat, RentalRequest } from '@/types'
 import CatCard from '@/components/CatCard'
@@ -8,6 +9,7 @@ import FilterBar from '@/components/FilterBar'
 import { ClipboardList, Search, MessageCircle } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { Suspense } from 'react'
 
 interface Filters { breed: string; maxAge: number; maxPrice: number; search: string }
 
@@ -26,21 +28,24 @@ const rentalLabel = (days: number) => {
   return `${days} дн.`
 }
 
-export default function RenterDashboard() {
+function RenterDashboardContent() {
+  const searchParams = useSearchParams()
+  const initialQ = searchParams.get('q') || ''
+
   const [cats, setCats] = useState<Cat[]>([])
   const [requests, setRequests] = useState<RentalRequest[]>([])
   const [unreadSet, setUnreadSet] = useState<Set<string>>(new Set())
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
 
-  const fetchCats = useCallback(async (filters: Filters = { breed: '', maxAge: 240, maxPrice: 5000, search: '' }) => {
+  const fetchCats = useCallback(async (filters: Filters = { breed: '', maxAge: 240, maxPrice: 5000, search: initialQ }) => {
     let query = supabase.from('cats').select('*, profiles(full_name)').eq('is_available', true)
     if (filters.breed) query = query.eq('breed', filters.breed)
     query = query.lte('age_months', filters.maxAge).lte('price_per_day', filters.maxPrice)
     if (filters.search) query = query.ilike('name', `%${filters.search}%`)
     const { data } = await query.order('created_at', { ascending: false })
     setCats(data || [])
-  }, [])
+  }, [initialQ])
 
   useEffect(() => {
     const init = async () => {
@@ -61,7 +66,6 @@ export default function RenterDashboard() {
         ])
         setRequests(reqData || [])
 
-        // Build unread set
         const readMap = new Map(reads?.map(r => [r.rental_request_id, r.last_read_at]) ?? [])
         const newUnread = new Set<string>()
         const seen = new Set<string>()
@@ -78,17 +82,17 @@ export default function RenterDashboard() {
       setLoading(false)
     }
     init()
-  }, [])
+  }, [fetchCats])
 
   if (loading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {[...Array(8)].map((_, i) => (
-          <div key={i} className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-100 dark:border-zinc-800 overflow-hidden animate-pulse">
-            <div className="aspect-[4/3] bg-zinc-100 dark:bg-zinc-800" />
+          <div key={i} className="bg-white dark:bg-teal-950/60 rounded-2xl border border-teal-100 dark:border-teal-800/30 overflow-hidden animate-pulse">
+            <div className="aspect-[4/3] bg-teal-100 dark:bg-teal-900/40" />
             <div className="p-4 space-y-2">
-              <div className="h-4 bg-zinc-100 dark:bg-zinc-800 rounded w-2/3" />
-              <div className="h-3 bg-zinc-100 dark:bg-zinc-800 rounded w-1/2" />
+              <div className="h-4 bg-teal-100 dark:bg-teal-900/40 rounded w-2/3" />
+              <div className="h-3 bg-teal-100 dark:bg-teal-900/40 rounded w-1/2" />
             </div>
           </div>
         ))}
@@ -98,23 +102,24 @@ export default function RenterDashboard() {
 
   return (
     <div>
+      {/* Header */}
       <div className="mb-8">
-        <p className="text-xs font-bold text-violet-600 uppercase tracking-widest mb-1">Каталог</p>
+        <p className="text-xs font-bold text-teal-600 uppercase tracking-widest mb-1">Каталог</p>
         <div className="flex items-end justify-between">
-          <h1 className="text-3xl font-bold text-zinc-900 dark:text-white tracking-tight">Доступные коты</h1>
-          <p className="text-zinc-400 dark:text-zinc-500 text-sm">{cats.length} питомцев</p>
+          <h1 className="text-3xl font-bold text-teal-900 dark:text-white tracking-tight">Доступные коты</h1>
+          <p className="text-teal-400 dark:text-teal-500 text-sm">{cats.length} питомцев</p>
         </div>
       </div>
 
-      <FilterBar onFilter={fetchCats} />
+      <FilterBar onFilter={fetchCats} defaultSearch={initialQ} />
 
       {cats.length === 0 ? (
-        <div className="text-center py-20 bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-100 dark:border-zinc-800">
-          <div className="w-14 h-14 bg-zinc-50 dark:bg-zinc-800 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-zinc-100 dark:border-zinc-700">
-            <Search className="w-6 h-6 text-zinc-300 dark:text-zinc-600" />
+        <div className="text-center py-20 bg-white dark:bg-teal-950/60 rounded-2xl border border-teal-100 dark:border-teal-800/30">
+          <div className="w-14 h-14 bg-teal-50 dark:bg-teal-900/40 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-teal-100 dark:border-teal-800/40">
+            <Search className="w-6 h-6 text-teal-300 dark:text-teal-600" />
           </div>
-          <p className="text-zinc-500 dark:text-zinc-400 font-medium">По вашему запросу котов не найдено</p>
-          <p className="text-zinc-400 dark:text-zinc-500 text-sm mt-1">Попробуйте изменить фильтры</p>
+          <p className="text-teal-600 dark:text-teal-400 font-medium">По вашему запросу котов не найдено</p>
+          <p className="text-teal-400 dark:text-teal-500 text-sm mt-1">Попробуйте изменить фильтры</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-12">
@@ -123,29 +128,29 @@ export default function RenterDashboard() {
       )}
 
       {requests.length > 0 && (
-        <div className="mt-8 pt-8 border-t border-zinc-100 dark:border-zinc-800">
+        <div className="mt-8 pt-8 border-t border-teal-100 dark:border-teal-800/40">
           <div className="flex items-center gap-2.5 mb-6">
-            <div className="w-8 h-8 bg-zinc-100 dark:bg-zinc-800 rounded-xl flex items-center justify-center">
-              <ClipboardList className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
+            <div className="w-8 h-8 bg-teal-100 dark:bg-teal-800/40 rounded-xl flex items-center justify-center">
+              <ClipboardList className="w-4 h-4 text-teal-500 dark:text-teal-400" />
             </div>
-            <h2 className="text-xl font-bold text-zinc-900 dark:text-white tracking-tight">Мои заявки</h2>
+            <h2 className="text-xl font-bold text-teal-900 dark:text-white tracking-tight">Мои заявки</h2>
           </div>
           <div className="flex flex-col gap-2">
             {requests.map((req: any) => {
               const cfg = statusConfig[req.status] || statusConfig.pending
               const hasUnread = unreadSet.has(req.id)
               return (
-                <div key={req.id} className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-100 dark:border-zinc-800 p-4 flex items-center gap-4 hover:border-zinc-200 dark:hover:border-zinc-700 transition-colors">
-                  <div className="w-12 h-12 rounded-xl overflow-hidden bg-zinc-50 dark:bg-zinc-800 flex-shrink-0">
+                <div key={req.id} className="bg-white dark:bg-teal-950/60 rounded-2xl border border-teal-100 dark:border-teal-800/30 p-4 flex items-center gap-4 hover:border-teal-200 dark:hover:border-teal-700 transition-colors">
+                  <div className="w-12 h-12 rounded-xl overflow-hidden bg-teal-50 dark:bg-teal-800/40 flex-shrink-0">
                     {req.cats?.photo_url ? (
                       <Image src={req.cats.photo_url} alt={req.cats.name} width={48} height={48} className="object-cover w-full h-full" />
                     ) : (
-                      <div className="w-full h-full bg-zinc-100 dark:bg-zinc-700" />
+                      <div className="w-full h-full bg-teal-100 dark:bg-teal-800/60" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-zinc-900 dark:text-white truncate">{req.cats?.name}</p>
-                    <p className="text-xs text-zinc-400 dark:text-zinc-500">
+                    <p className="font-semibold text-teal-900 dark:text-white truncate">{req.cats?.name}</p>
+                    <p className="text-xs text-teal-400 dark:text-teal-500">
                       {req.cats?.breed} · {rentalLabel(req.rental_days ?? 1)} · {new Date(req.requested_date).toLocaleDateString('ru-RU')}
                     </p>
                   </div>
@@ -155,12 +160,12 @@ export default function RenterDashboard() {
                     </span>
                     <Link
                       href={`/chat/${req.id}`}
-                      className="relative w-8 h-8 bg-violet-50 dark:bg-violet-950/40 hover:bg-violet-100 dark:hover:bg-violet-950/60 active:scale-[0.95] text-violet-600 dark:text-violet-500 rounded-xl flex items-center justify-center transition-all"
+                      className="relative w-8 h-8 bg-teal-50 dark:bg-teal-900/40 hover:bg-teal-100 dark:hover:bg-teal-900/60 active:scale-[0.95] text-teal-600 dark:text-teal-500 rounded-xl flex items-center justify-center transition-all"
                       title="Написать хозяину"
                     >
                       <MessageCircle className="w-4 h-4" />
                       {hasUnread && (
-                        <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-violet-600 rounded-full border-2 border-white dark:border-zinc-900" />
+                        <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-teal-600 rounded-full border-2 border-white dark:border-teal-950" />
                       )}
                     </Link>
                   </div>
@@ -171,5 +176,25 @@ export default function RenterDashboard() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function RenterDashboard() {
+  return (
+    <Suspense fallback={
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        {[...Array(8)].map((_, i) => (
+          <div key={i} className="bg-white dark:bg-teal-950/60 rounded-2xl border border-teal-100 dark:border-teal-800/30 overflow-hidden animate-pulse">
+            <div className="aspect-[4/3] bg-teal-100 dark:bg-teal-900/40" />
+            <div className="p-4 space-y-2">
+              <div className="h-4 bg-teal-100 dark:bg-teal-900/40 rounded w-2/3" />
+              <div className="h-3 bg-teal-100 dark:bg-teal-900/40 rounded w-1/2" />
+            </div>
+          </div>
+        ))}
+      </div>
+    }>
+      <RenterDashboardContent />
+    </Suspense>
   )
 }

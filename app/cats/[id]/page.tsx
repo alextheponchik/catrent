@@ -73,13 +73,13 @@ export default function CatPage() {
   if (!cat) {
     return (
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white/80 dark:bg-violet-950/60 backdrop-blur-sm rounded-2xl border border-violet-100 dark:border-violet-800/30 overflow-hidden animate-pulse">
+        <div className="bg-white/80 dark:bg-teal-950/60 backdrop-blur-sm rounded-2xl border border-teal-100 dark:border-teal-800/30 overflow-hidden animate-pulse">
           <div className="grid grid-cols-1 md:grid-cols-2">
-            <div className="aspect-square bg-violet-50 dark:bg-violet-900/30" />
+            <div className="aspect-square bg-teal-50 dark:bg-teal-900/30" />
             <div className="p-8 space-y-4">
-              <div className="h-8 bg-violet-50 dark:bg-violet-900/30 rounded-lg w-1/2" />
-              <div className="h-4 bg-violet-50 dark:bg-violet-900/30 rounded w-1/3" />
-              {[...Array(4)].map((_, i) => <div key={i} className="h-4 bg-violet-50 dark:bg-violet-900/30 rounded" />)}
+              <div className="h-8 bg-teal-50 dark:bg-teal-900/30 rounded-lg w-1/2" />
+              <div className="h-4 bg-teal-50 dark:bg-teal-900/30 rounded w-1/3" />
+              {[...Array(4)].map((_, i) => <div key={i} className="h-4 bg-teal-50 dark:bg-teal-900/30 rounded" />)}
             </div>
           </div>
         </div>
@@ -89,23 +89,23 @@ export default function CatPage() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <Link href="/" className="inline-flex items-center gap-1.5 text-violet-400 dark:text-violet-500 hover:text-violet-700 dark:hover:text-violet-300 mb-6 text-sm transition-colors font-medium">
+      <Link href="/" className="inline-flex items-center gap-1.5 text-teal-400 dark:text-teal-500 hover:text-teal-700 dark:hover:text-teal-300 mb-6 text-sm transition-colors font-medium">
         <ArrowLeft className="w-4 h-4" /> Назад к каталогу
       </Link>
 
-      <div className="bg-white/80 dark:bg-violet-950/60 backdrop-blur-sm rounded-2xl overflow-hidden border border-violet-100 dark:border-violet-800/30 shadow-lg shadow-violet-100/50 dark:shadow-violet-900/20">
+      <div className="bg-white/80 dark:bg-teal-950/60 backdrop-blur-sm rounded-2xl overflow-hidden border border-teal-100 dark:border-teal-800/30 shadow-lg shadow-teal-100/50 dark:shadow-teal-900/20">
         <div className="grid grid-cols-1 md:grid-cols-2">
-          <div className="relative bg-violet-50 dark:bg-violet-900/30" style={{ minHeight: '360px' }}>
+          <div className="relative bg-teal-50 dark:bg-teal-900/30" style={{ minHeight: '360px' }}>
             {cat.photo_url ? (
               <Image src={cat.photo_url} alt={cat.name} fill className="object-cover" />
             ) : (
               <div className="flex items-center justify-center h-full">
-                <CatIcon className="w-20 h-20 text-violet-200 dark:text-violet-700" strokeWidth={1} />
+                <CatIcon className="w-20 h-20 text-teal-200 dark:text-teal-700" strokeWidth={1} />
               </div>
             )}
             {!cat.is_available && (
-              <div className="absolute inset-0 bg-violet-900/40 backdrop-blur-[2px] flex items-center justify-center">
-                <span className="bg-white/90 dark:bg-violet-950/90 text-violet-700 dark:text-violet-200 text-sm font-semibold px-4 py-2 rounded-full">
+              <div className="absolute inset-0 bg-teal-900/40 backdrop-blur-[2px] flex items-center justify-center">
+                <span className="bg-white/90 dark:bg-teal-950/90 text-teal-700 dark:text-teal-200 text-sm font-semibold px-4 py-2 rounded-full">
                   Недоступен
                 </span>
               </div>
@@ -115,8 +115,8 @@ export default function CatPage() {
           <div className="p-8 flex flex-col justify-between">
             <div>
               <div className="mb-6">
-                <h1 className="text-3xl font-extrabold text-violet-900 dark:text-white tracking-tight mb-0.5">{cat.name}</h1>
-                <p className="text-violet-400 dark:text-violet-500">{cat.breed}</p>
+                <h1 className="text-3xl font-extrabold text-teal-900 dark:text-white tracking-tight mb-0.5">{cat.name}</h1>
+                <p className="text-teal-400 dark:text-teal-500">{cat.breed}</p>
               </div>
               <div className="flex flex-col gap-3 mb-6">
                 <InfoRow icon={Calendar} label={`Возраст: ${ageLabel}`} />
@@ -139,14 +139,14 @@ export default function CatPage() {
                   </div>
                 ) : (
                   <Button onClick={() => setShowDialog(true)}
-                    className="w-full h-12 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 active:scale-[0.98] text-white transition-all text-base font-semibold rounded-xl border-0 shadow-sm shadow-violet-300 dark:shadow-violet-900/50">
+                    className="w-full h-12 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 active:scale-[0.98] text-white transition-all text-base font-semibold rounded-xl border-0 shadow-sm shadow-teal-300 dark:shadow-teal-900/50">
                     Запросить аренду
                   </Button>
                 )
               )}
               {!userRole && cat.is_available && (
                 <Link href="/signup">
-                  <Button className="w-full h-12 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 active:scale-[0.98] transition-all text-base font-semibold rounded-xl border-0">
+                  <Button className="w-full h-12 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 active:scale-[0.98] transition-all text-base font-semibold rounded-xl border-0">
                     Войдите, чтобы арендовать
                   </Button>
                 </Link>
@@ -157,47 +157,47 @@ export default function CatPage() {
       </div>
 
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="max-w-md dark:bg-violet-950 dark:border-violet-800/50">
+        <DialogContent className="max-w-md dark:bg-teal-950 dark:border-teal-800/50">
           <DialogHeader>
-            <DialogTitle className="text-violet-900 dark:text-white">Запрос на аренду — {cat.name}</DialogTitle>
+            <DialogTitle className="text-teal-900 dark:text-white">Запрос на аренду — {cat.name}</DialogTitle>
           </DialogHeader>
           <div className="flex flex-col gap-4 mt-2">
             <div>
-              <p className="text-sm font-medium text-violet-700 dark:text-violet-300 mb-2">Срок аренды</p>
+              <p className="text-sm font-medium text-teal-700 dark:text-teal-300 mb-2">Срок аренды</p>
               <div className="grid grid-cols-5 gap-1.5">
                 {RENTAL_OPTIONS.map(opt => (
                   <button key={opt.days} type="button" onClick={() => setRentalDays(opt.days)}
                     className={`py-2 rounded-xl text-xs font-semibold transition-all active:scale-[0.96] cursor-pointer ${
                       rentalDays === opt.days
-                        ? 'bg-gradient-to-br from-violet-600 to-purple-600 text-white shadow-sm shadow-violet-300 dark:shadow-violet-900/50'
-                        : 'bg-violet-50 dark:bg-violet-900/40 text-violet-600 dark:text-violet-400 hover:bg-violet-100 dark:hover:bg-violet-900/60'
+                        ? 'bg-gradient-to-br from-teal-600 to-cyan-600 text-white shadow-sm shadow-teal-300 dark:shadow-teal-900/50'
+                        : 'bg-teal-50 dark:bg-teal-900/40 text-teal-600 dark:text-teal-400 hover:bg-teal-100 dark:hover:bg-teal-900/60'
                     }`}>
                     {opt.label}
                   </button>
                 ))}
               </div>
               <div className="mt-3 flex items-center justify-between px-1">
-                <p className="text-sm text-violet-500 dark:text-violet-400">
+                <p className="text-sm text-teal-500 dark:text-teal-400">
                   {cat.price_per_day} ₽ × {rentalDays} {rentalDays === 1 ? 'день' : rentalDays < 5 ? 'дня' : 'дней'}
                 </p>
-                <p className="text-lg font-extrabold text-violet-900 dark:text-white">{totalPrice} ₽</p>
+                <p className="text-lg font-extrabold text-teal-900 dark:text-white">{totalPrice} ₽</p>
               </div>
             </div>
             <div>
-              <p className="text-sm font-medium text-violet-700 dark:text-violet-300 mb-2">
-                Сообщение хозяину <span className="text-violet-400 font-normal">(необязательно)</span>
+              <p className="text-sm font-medium text-teal-700 dark:text-teal-300 mb-2">
+                Сообщение хозяину <span className="text-teal-400 font-normal">(необязательно)</span>
               </p>
               <Textarea value={message} onChange={e => setMessage(e.target.value)}
                 placeholder="Расскажите о себе и когда хотите взять кота..." rows={3}
-                className="resize-none border-violet-200 dark:border-violet-700 dark:bg-violet-900/40 focus:border-violet-400 focus:ring-violet-400" />
+                className="resize-none border-teal-200 dark:border-teal-700 dark:bg-teal-900/40 focus:border-teal-400 focus:ring-teal-400" />
             </div>
             <div className="flex gap-3">
               <Button variant="outline" onClick={() => setShowDialog(false)}
-                className="flex-1 border-violet-200 dark:border-violet-700 text-violet-600 dark:text-violet-300 hover:bg-violet-50 dark:hover:bg-violet-900/40">
+                className="flex-1 border-teal-200 dark:border-teal-700 text-teal-600 dark:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-900/40">
                 Отмена
               </Button>
               <Button onClick={handleRequest} disabled={submitting}
-                className="flex-1 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 active:scale-[0.98] transition-all border-0 font-semibold">
+                className="flex-1 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 active:scale-[0.98] transition-all border-0 font-semibold">
                 {submitting ? 'Отправляем...' : `Отправить · ${totalPrice} ₽`}
               </Button>
             </div>
@@ -211,10 +211,10 @@ export default function CatPage() {
 function InfoRow({ icon: Icon, label, bold }: { icon: React.ElementType; label: string; bold?: boolean }) {
   return (
     <div className="flex items-start gap-3">
-      <div className="w-7 h-7 bg-violet-50 dark:bg-violet-900/40 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-        <Icon className="w-3.5 h-3.5 text-violet-500 dark:text-violet-400" />
+      <div className="w-7 h-7 bg-teal-50 dark:bg-teal-900/40 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+        <Icon className="w-3.5 h-3.5 text-teal-500 dark:text-teal-400" />
       </div>
-      <span className={`text-sm leading-relaxed ${bold ? 'font-bold text-violet-900 dark:text-white text-base' : 'text-violet-600 dark:text-violet-400'}`}>
+      <span className={`text-sm leading-relaxed ${bold ? 'font-bold text-teal-900 dark:text-white text-base' : 'text-teal-600 dark:text-teal-400'}`}>
         {label}
       </span>
     </div>
