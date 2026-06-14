@@ -15,7 +15,6 @@ interface RequestInfo {
   status: string
   rental_days: number
   cats: { id: string; name: string; breed: string; photo_url?: string; owner_id: string }
-  profiles: { full_name: string }
 }
 
 const rentalLabel = (days: number) => {
@@ -40,11 +39,13 @@ export default function ChatPage() {
   const [input, setInput] = useState('')
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [requestInfo, setRequestInfo] = useState<RequestInfo | null>(null)
+  const [renterName, setRenterName] = useState('Арендатор')
   const [ownerName, setOwnerName] = useState('Хозяин')
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const currentUserIdRef = useRef<string | null>(null)
   const supabase = createClient()
 
   const scrollToBottom = useCallback(() => {
@@ -63,11 +64,14 @@ export default function ChatPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/login'); return }
       setCurrentUserId(user.id)
+      currentUserIdRef.current = user.id
 
+      // Fetch request WITHOUT nested profile joins to avoid FK ambiguity
       const [{ data: reqData }, { data: msgs }] = await Promise.all([
         supabase.from('rental_requests')
-          .select('*, cats(id, name, breed, photo_url, owner_id), profiles(full_name)')
-          .eq('id', requestId).single(),
+          .select('id, renter_id, status, rental_days, cats(id, name, breed, photo_url, owner_id)')
+          .eq('id', requestId)
+          .single(),
         supabase.from('messages')
           .select('*, profiles(full_name)')
           .eq('rental_request_id', requestId)
@@ -75,22 +79,28 @@ export default function ChatPage() {
       ])
 
       if (!reqData) { router.push('/dashboard'); return }
+
+      // Supabase may type cats as array; normalise to single object
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const catsData = (Array.isArray((reqData as any).cats) ? (reqData as any).cats[0] : (reqData as any).cats) as { id: string; name: string; breed: string; photo_url?: string; owner_id: string } | null
+
       const isRenter = reqData.renter_id === user.id
-      const isOwner = reqData.cats?.owner_id === user.id
+      const isOwner = catsData?.owner_id === user.id
       if (!isRenter && !isOwner) { router.push('/dashboard'); return }
 
-      setRequestInfo(reqData as RequestInfo)
+      const normalised = { ...reqData, cats: catsData }
+      setRequestInfo(normalised as unknown as RequestInfo)
       setMessages(msgs || [])
 
-      // Fetch owner's name separately to avoid nested FK join issues
-      if (reqData.cats?.owner_id) {
-        const { data: ownerProfile } = await supabase
-          .from('profiles')
-          .select('full_name')
-          .eq('id', reqData.cats.owner_id)
-          .single()
-        if (ownerProfile?.full_name) setOwnerName(ownerProfile.full_name)
-      }
+      // Fetch both profiles separately — no FK ambiguity
+      const ownerPromise = catsData?.owner_id
+        ? supabase.from('profiles').select('full_name').eq('id', catsData.owner_id).single()
+        : Promise.resolve({ data: null, error: null })
+      const renterPromise = supabase.from('profiles').select('full_name').eq('id', reqData.renter_id).single()
+
+      const [{ data: ownerProfile }, { data: renterProfile }] = await Promise.all([ownerPromise, renterPromise])
+      if (ownerProfile?.full_name) setOwnerName(ownerProfile.full_name)
+      if (renterProfile?.full_name) setRenterName(renterProfile.full_name)
 
       setLoading(false)
       markAsRead(user.id)
@@ -102,10 +112,11 @@ export default function ChatPage() {
       .on('postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages', filter: `rental_request_id=eq.${requestId}` },
         async (payload) => {
-          const { data } = await supabase.from('messages').select('*, profiles(full_name)').eq('id', payload.new.id).single()
+          const { data } = await supabase
+            .from('messages').select('*, profiles(full_name)').eq('id', payload.new.id).single()
           if (data) {
             setMessages(prev => prev.some(m => m.id === data.id) ? prev : [...prev, data])
-            setCurrentUserId(uid => { if (uid) markAsRead(uid); return uid })
+            if (currentUserIdRef.current) markAsRead(currentUserIdRef.current)
           }
         }
       )
@@ -124,15 +135,17 @@ export default function ChatPage() {
     if (!text || !currentUserId || sending) return
     setSending(true)
     setInput('')
-    await supabase.from('messages').insert({ rental_request_id: requestId, sender_id: currentUserId, content: text })
+    await supabase.from('messages').insert({
+      rental_request_id: requestId,
+      sender_id: currentUserId,
+      content: text,
+    })
     setSending(false)
     inputRef.current?.focus()
   }
 
   const otherName = requestInfo
-    ? currentUserId === requestInfo.renter_id
-      ? ownerName
-      : requestInfo.profiles?.full_name ?? 'Арендатор'
+    ? currentUserId === requestInfo.renter_id ? ownerName : renterName
     : ''
 
   if (loading) {
@@ -169,9 +182,11 @@ export default function ChatPage() {
           </p>
         </div>
         <span className={`text-xs px-2.5 py-1 rounded-full font-medium flex-shrink-0 ${
-          requestInfo?.status === 'approved' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900' :
-          requestInfo?.status === 'rejected' ? 'bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-900' :
-          'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-100 dark:border-amber-900'
+          requestInfo?.status === 'approved'
+            ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900'
+            : requestInfo?.status === 'rejected'
+            ? 'bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-900'
+            : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-100 dark:border-amber-900'
         }`}>
           {statusLabel[requestInfo?.status ?? 'pending']}
         </span>
@@ -185,7 +200,7 @@ export default function ChatPage() {
               <CatIcon className="w-7 h-7 text-teal-300 dark:text-teal-600" strokeWidth={1.5} />
             </div>
             <p className="text-teal-600 dark:text-teal-400 font-medium">Начните разговор</p>
-            <p className="text-teal-400 dark:text-teal-500 text-sm">Напишите первое сообщение {otherName}</p>
+            <p className="text-teal-400 dark:text-teal-500 text-sm">Напишите первое сообщение для {otherName}</p>
           </div>
         ) : (
           <>
@@ -198,7 +213,9 @@ export default function ChatPage() {
               return (
                 <div key={msg.id} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
                   {showName && (
-                    <p className="text-xs text-teal-400 dark:text-teal-500 px-1 mb-1">{msg.profiles?.full_name ?? otherName}</p>
+                    <p className="text-xs text-teal-400 dark:text-teal-500 px-1 mb-1">
+                      {msg.profiles?.full_name ?? otherName}
+                    </p>
                   )}
                   <div className={`max-w-[75%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                     isMe
@@ -230,8 +247,11 @@ export default function ChatPage() {
           className="flex-1 h-11 px-4 rounded-xl border border-teal-200 dark:border-teal-700 bg-white dark:bg-teal-900/40 text-sm text-teal-900 dark:text-teal-100 placeholder:text-teal-400 dark:placeholder:text-teal-500 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 transition-colors"
           autoComplete="off"
         />
-        <Button type="submit" disabled={!input.trim() || sending}
-          className="h-11 w-11 p-0 bg-teal-600 hover:bg-teal-700 active:scale-[0.95] transition-all rounded-xl flex-shrink-0 disabled:opacity-40 border-0">
+        <Button
+          type="submit"
+          disabled={!input.trim() || sending}
+          className="h-11 w-11 p-0 bg-teal-600 hover:bg-teal-700 active:scale-[0.95] transition-all rounded-xl flex-shrink-0 disabled:opacity-40 border-0"
+        >
           <Send className="w-4 h-4" />
         </Button>
       </form>
