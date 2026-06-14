@@ -107,7 +107,7 @@ export default function Navbar() {
 
             {loading ? null : profile ? (
               <>
-                <Link href="/dashboard" className="relative w-9 h-9 flex items-center justify-center rounded-xl text-teal-400 hover:text-teal-700 dark:hover:text-teal-200 hover:bg-teal-50 dark:hover:bg-teal-900/40 transition-all" aria-label="Чат">
+                <Link href="/chat" className="relative w-9 h-9 flex items-center justify-center rounded-xl text-teal-400 hover:text-teal-700 dark:hover:text-teal-200 hover:bg-teal-50 dark:hover:bg-teal-900/40 transition-all" aria-label="Чат">
                   <MessageCircle className="w-4 h-4" />
                   {unreadCount > 0 && (
                     <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-teal-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 border-2 border-white dark:border-teal-950">

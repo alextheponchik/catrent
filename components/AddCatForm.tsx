@@ -2,10 +2,6 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { Cat } from '@/types'
 import { Upload, X } from 'lucide-react'
 
@@ -87,79 +83,94 @@ export default function AddCatForm({ onSuccess, onCancel, editCat }: Props) {
     }
   }
 
+  const fieldCls = "w-full h-10 px-3 rounded-xl border border-teal-200 dark:border-teal-700 bg-teal-50/50 dark:bg-teal-900/40 text-sm text-teal-900 dark:text-teal-100 placeholder:text-teal-300 dark:placeholder:text-teal-600 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 transition-colors"
+  const labelCls = "block text-xs font-semibold text-teal-600 dark:text-teal-400 mb-1.5"
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="name">Имя кота *</Label>
-          <Input id="name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
+          <label htmlFor="name" className={labelCls}>Имя кота *</label>
+          <input id="name" className={fieldCls} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
         </div>
         <div>
-          <Label htmlFor="breed">Порода *</Label>
-          <Input id="breed" value={form.breed} onChange={e => setForm({ ...form, breed: e.target.value })} required />
+          <label htmlFor="breed" className={labelCls}>Порода *</label>
+          <input id="breed" className={fieldCls} value={form.breed} onChange={e => setForm({ ...form, breed: e.target.value })} required />
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="age">Возраст (месяцев) *</Label>
-          <Input id="age" type="number" min="1" max="300" value={form.age_months}
+          <label htmlFor="age" className={labelCls}>Возраст (мес.) *</label>
+          <input id="age" type="number" min="1" max="300" className={fieldCls} value={form.age_months}
             onChange={e => setForm({ ...form, age_months: e.target.value })} required />
         </div>
         <div>
-          <Label htmlFor="price">Цена за день (₽) *</Label>
-          <Input id="price" type="number" min="50" value={form.price_per_day}
+          <label htmlFor="price" className={labelCls}>Цена за день (₽) *</label>
+          <input id="price" type="number" min="50" className={fieldCls} value={form.price_per_day}
             onChange={e => setForm({ ...form, price_per_day: e.target.value })} required />
         </div>
       </div>
 
       <div>
-        <Label htmlFor="feeding">Требования по питанию *</Label>
-        <Textarea id="feeding" value={form.feeding_requirements}
+        <label htmlFor="feeding" className={labelCls}>Требования по питанию *</label>
+        <textarea id="feeding"
+          className="w-full px-3 py-2 rounded-xl border border-teal-200 dark:border-teal-700 bg-teal-50/50 dark:bg-teal-900/40 text-sm text-teal-900 dark:text-teal-100 placeholder:text-teal-300 dark:placeholder:text-teal-600 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 transition-colors resize-none"
+          value={form.feeding_requirements}
           onChange={e => setForm({ ...form, feeding_requirements: e.target.value })}
           placeholder="Например: сухой корм 2 раза в день, не переносит рыбу..."
           required rows={2} />
       </div>
 
       <div>
-        <Label htmlFor="description">
-          Описание <span className="text-zinc-400 font-normal">(необязательно)</span>
-        </Label>
-        <Textarea id="description" value={form.description}
+        <label htmlFor="description" className={labelCls}>
+          Описание <span className="font-normal text-teal-400 dark:text-teal-500">(необязательно)</span>
+        </label>
+        <textarea id="description"
+          className="w-full px-3 py-2 rounded-xl border border-teal-200 dark:border-teal-700 bg-teal-50/50 dark:bg-teal-900/40 text-sm text-teal-900 dark:text-teal-100 placeholder:text-teal-300 dark:placeholder:text-teal-600 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 transition-colors resize-none"
+          value={form.description}
           onChange={e => setForm({ ...form, description: e.target.value })}
           placeholder="Расскажите о характере, привычках, особенностях кота..."
           rows={3} />
-        <p className="text-xs text-zinc-400 mt-1">Отображается при наведении на карточку кота</p>
+        <p className="text-xs text-teal-400 dark:text-teal-500 mt-1">Отображается при наведении на карточку</p>
       </div>
 
       <div>
-        <Label>Фото кота</Label>
+        <label className={labelCls}>Фото кота</label>
         <div className="mt-1">
           {photoPreview ? (
             <div className="relative inline-block">
-              <img src={photoPreview} alt="preview" className="h-32 w-32 object-cover rounded-xl" />
+              <img src={photoPreview} alt="preview" className="h-32 w-32 object-cover rounded-xl border-2 border-teal-100 dark:border-teal-800/40" />
               <button type="button" onClick={() => { setPhotoPreview(''); setPhotoFile(null) }}
-                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5">
+                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors">
                 <X className="w-3 h-3" />
               </button>
             </div>
           ) : (
-            <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-zinc-200 dark:border-zinc-700 rounded-xl cursor-pointer hover:border-orange-300 hover:bg-teal-50 dark:hover:bg-orange-950/20 transition-colors">
-              <Upload className="w-6 h-6 text-zinc-400 mb-1" />
-              <span className="text-sm text-zinc-500">Загрузить фото</span>
+            <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-teal-200 dark:border-teal-700 rounded-xl cursor-pointer hover:border-teal-400 hover:bg-teal-50 dark:hover:bg-teal-900/40 transition-colors group">
+              <Upload className="w-5 h-5 text-teal-300 dark:text-teal-600 mb-1 group-hover:text-teal-500 dark:group-hover:text-teal-400 transition-colors" />
+              <span className="text-sm text-teal-400 dark:text-teal-500 group-hover:text-teal-600 dark:group-hover:text-teal-300 transition-colors">Загрузить фото</span>
               <input type="file" accept="image/*" className="hidden" onChange={handlePhoto} />
             </label>
           )}
         </div>
       </div>
 
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+      {error && (
+        <p className="text-red-500 dark:text-red-400 text-sm bg-red-50 dark:bg-red-950/30 px-3 py-2 rounded-xl border border-red-100 dark:border-red-900/40">
+          {error}
+        </p>
+      )}
 
       <div className="flex gap-3 pt-2">
-        <Button type="button" variant="outline" onClick={onCancel} className="flex-1">Отмена</Button>
-        <Button type="submit" disabled={loading} className="flex-1 bg-teal-600 hover:bg-teal-700">
-          {loading ? 'Сохраняем...' : editCat ? 'Сохранить' : 'Добавить кота'}
-        </Button>
+        <button type="button" onClick={onCancel}
+          className="flex-1 h-10 rounded-xl border border-teal-200 dark:border-teal-700 text-sm font-medium text-teal-600 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-900/40 active:scale-[0.98] transition-all">
+          Отмена
+        </button>
+        <button type="submit" disabled={loading}
+          className="flex-1 h-10 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold active:scale-[0.98] transition-all disabled:opacity-50 border-0">
+          {loading ? 'Сохраняем...' : editCat ? 'Сохранить изменения' : 'Добавить кота'}
+        </button>
       </div>
     </form>
   )

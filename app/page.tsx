@@ -19,20 +19,29 @@ export default async function HomePage() {
 
   return (
     <div>
-      {/* ── Hero ── */}
-      <section className="-mx-4 sm:-mx-6 lg:-mx-8 -mt-8 relative overflow-hidden min-h-[580px] flex flex-col">
-        {/* Base */}
-        <div className="absolute inset-0 bg-teal-950" />
+      {/* ── Hero — органичная карточка с CSS-градиентными блобами ── */}
+      <section className="relative overflow-hidden rounded-3xl min-h-[540px] flex flex-col mb-0 animate-fade-in">
+        {/* Многослойный CSS-градиент — без прямоугольных границ блобов */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `
+              radial-gradient(ellipse 90% 70% at 15% 55%, rgba(13,148,136,0.55) 0%, transparent 60%),
+              radial-gradient(ellipse 75% 80% at 88% 18%, rgba(6,182,212,0.35) 0%, transparent 58%),
+              radial-gradient(ellipse 60% 60% at 50% 100%, rgba(5,150,105,0.25) 0%, transparent 60%),
+              radial-gradient(ellipse 50% 50% at 70% 60%, rgba(20,184,166,0.2) 0%, transparent 55%),
+              hsl(179,60%,4%)
+            `,
+          }}
+        />
 
-        {/* Organic animated blobs — make it non-rectangular */}
-        <div className="absolute -top-32 -left-32 w-[700px] h-[700px] bg-teal-700/60 rounded-full blur-[140px] animate-float delay-0" />
-        <div className="absolute -top-16 right-0 w-[500px] h-[600px] bg-cyan-600/35 rounded-full blur-[120px] translate-x-1/4 animate-float-slow delay-2s" />
-        <div className="absolute top-1/3 left-1/4 w-[380px] h-[380px] bg-teal-500/25 rounded-full blur-[90px] animate-float delay-4s" />
-        <div className="absolute bottom-0 right-1/4 w-[320px] h-[320px] bg-cyan-700/30 rounded-full blur-[100px] animate-float-slow delay-3s" />
-        <div className="absolute -bottom-20 left-0 w-[500px] h-[300px] bg-emerald-700/20 rounded-full blur-[120px] animate-float delay-2s" />
+        {/* Дополнительная анимированная текстура */}
+        <div className="absolute inset-0 opacity-30 animate-float-slow" style={{
+          background: 'radial-gradient(ellipse 80% 50% at 30% 20%, rgba(34,211,238,0.15) 0%, transparent 65%)',
+        }} />
 
-        {/* Content */}
-        <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 py-28 lg:py-40 flex-1">
+        {/* Контент */}
+        <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 py-24 lg:py-36 flex-1">
           <div className="animate-fade-in inline-flex items-center gap-2 bg-white/15 text-white px-4 py-1.5 rounded-full text-xs font-semibold tracking-widest uppercase backdrop-blur-sm mb-8 border border-white/25">
             <Star className="w-3 h-3 fill-white" />
             Платформа №1 по аренде котов
@@ -51,7 +60,7 @@ export default async function HomePage() {
             <SearchHero />
           </div>
 
-          {/* Stats */}
+          {/* Статистика */}
           <div className="animate-fade-in-up delay-500 flex flex-wrap items-center justify-center gap-10 mt-14">
             {[
               { value: `${cats?.length ?? 0}+`, label: 'котов онлайн' },
@@ -64,16 +73,6 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Organic wave bottom — connects to page background */}
-        <div className="relative z-10 w-full flex-shrink-0 -mb-px">
-          <svg viewBox="0 0 1440 80" preserveAspectRatio="none" className="w-full block" style={{ height: '80px' }}>
-            <path
-              d="M0,40 C180,80 360,10 540,45 C720,80 900,5 1080,38 C1260,70 1380,30 1440,40 L1440,80 L0,80 Z"
-              className="fill-[hsl(var(--background))]"
-            />
-          </svg>
         </div>
       </section>
 

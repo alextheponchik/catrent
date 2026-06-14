@@ -51,7 +51,7 @@ export default function OwnerDashboard() {
 
     const [{ data: reqData }, { data: reads }, { data: latestMsgs }] = await Promise.all([
       supabase.from('rental_requests')
-        .select('*, cats(name), profiles(full_name, phone)')
+        .select('*, cats(name)')
         .in('cat_id', catIds)
         .order('requested_date', { ascending: false }),
       supabase.from('conversation_reads')
@@ -63,7 +63,18 @@ export default function OwnerDashboard() {
         .order('created_at', { ascending: false }),
     ])
 
-    setRequests(reqData || [])
+    // Fetch renter profiles separately — avoids FK ambiguity in rental_requests join
+    const renterIds = Array.from(new Set((reqData || []).map((r: any) => r.renter_id)))
+    const { data: renterProfiles } = renterIds.length > 0
+      ? await supabase.from('profiles').select('id, full_name, phone').in('id', renterIds)
+      : { data: [] }
+    const profileMap = new Map((renterProfiles || []).map((p: any) => [p.id, p]))
+
+    const reqsWithProfiles = (reqData || []).map((r: any) => ({
+      ...r,
+      profiles: profileMap.get(r.renter_id) || null,
+    }))
+    setRequests(reqsWithProfiles)
 
     const readMap = new Map(reads?.map(r => [r.rental_request_id, r.last_read_at]) ?? [])
     const newUnread = new Set<string>()

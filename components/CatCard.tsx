@@ -11,9 +11,10 @@ interface Props {
 }
 
 export default function CatCard({ cat, showActions, onToggleAvailable, onDelete }: Props) {
+  const years = Math.floor(cat.age_months / 12)
   const ageLabel = cat.age_months >= 12
-    ? `${Math.floor(cat.age_months / 12)} ${pluralYears(Math.floor(cat.age_months / 12))}`
-    : `${cat.age_months} ${pluralMonths(cat.age_months)}`
+    ? `${years} ${pluralYears(years)}`
+    : '< 1 года'
 
   return (
     <div className="bg-white/80 dark:bg-teal-950/60 backdrop-blur-sm border border-teal-100 dark:border-teal-800/30 rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-teal-100/60 dark:hover:shadow-teal-900/40 hover:-translate-y-1 active:scale-[0.99] transition-all duration-300 group cursor-pointer">
@@ -102,8 +103,3 @@ function pluralYears(n: number) {
   return 'лет'
 }
 
-function pluralMonths(n: number) {
-  if (n % 10 === 1 && n % 100 !== 11) return 'месяц'
-  if ([2,3,4].includes(n % 10) && ![12,13,14].includes(n % 100)) return 'месяца'
-  return 'месяцев'
-}
