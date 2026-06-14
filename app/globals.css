@@ -10,7 +10,6 @@
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
-    /* Orange-500 as primary */
     --primary: 25 95% 53%;
     --primary-foreground: 0 0% 100%;
     --secondary: 240 4.8% 95.9%;
@@ -30,9 +29,9 @@
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
+    --card: 240 5.9% 10%;
     --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
+    --popover: 240 5.9% 10%;
     --popover-foreground: 0 0% 98%;
     --primary: 25 95% 53%;
     --primary-foreground: 0 0% 100%;
@@ -56,5 +55,10 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
+    background-image: url('/pattern-light.svg');
+    background-repeat: repeat;
+  }
+  .dark body {
+    background-image: url('/pattern-dark.svg');
   }
 }

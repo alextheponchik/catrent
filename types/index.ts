@@ -16,6 +16,7 @@ export interface Cat {
   breed: string
   age_months: number
   feeding_requirements: string
+  description?: string
   price_per_day: number
   is_available: boolean
   photo_url?: string
@@ -28,6 +29,7 @@ export interface RentalRequest {
   cat_id: string
   renter_id: string
   status: RentalStatus
+  rental_days: number
   requested_date: string
   message?: string
   cats?: Cat

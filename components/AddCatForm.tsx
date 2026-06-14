@@ -25,6 +25,7 @@ export default function AddCatForm({ onSuccess, onCancel, editCat }: Props) {
     breed: editCat?.breed || '',
     age_months: editCat?.age_months?.toString() || '',
     feeding_requirements: editCat?.feeding_requirements || '',
+    description: editCat?.description || '',
     price_per_day: editCat?.price_per_day?.toString() || '500',
   })
 
@@ -64,6 +65,7 @@ export default function AddCatForm({ onSuccess, onCancel, editCat }: Props) {
         breed: form.breed,
         age_months: parseInt(form.age_months),
         feeding_requirements: form.feeding_requirements,
+        description: form.description.trim() || null,
         price_per_day: parseInt(form.price_per_day),
         photo_url,
         owner_id: user.id,
@@ -116,7 +118,18 @@ export default function AddCatForm({ onSuccess, onCancel, editCat }: Props) {
         <Textarea id="feeding" value={form.feeding_requirements}
           onChange={e => setForm({ ...form, feeding_requirements: e.target.value })}
           placeholder="Например: сухой корм 2 раза в день, не переносит рыбу..."
-          required />
+          required rows={2} />
+      </div>
+
+      <div>
+        <Label htmlFor="description">
+          Описание <span className="text-zinc-400 font-normal">(необязательно)</span>
+        </Label>
+        <Textarea id="description" value={form.description}
+          onChange={e => setForm({ ...form, description: e.target.value })}
+          placeholder="Расскажите о характере, привычках, особенностях кота..."
+          rows={3} />
+        <p className="text-xs text-zinc-400 mt-1">Отображается при наведении на карточку кота</p>
       </div>
 
       <div>
@@ -131,9 +144,9 @@ export default function AddCatForm({ onSuccess, onCancel, editCat }: Props) {
               </button>
             </div>
           ) : (
-            <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:border-orange-300 hover:bg-orange-50 transition-colors">
-              <Upload className="w-6 h-6 text-gray-400 mb-1" />
-              <span className="text-sm text-gray-500">Загрузить фото</span>
+            <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-zinc-200 dark:border-zinc-700 rounded-xl cursor-pointer hover:border-orange-300 hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors">
+              <Upload className="w-6 h-6 text-zinc-400 mb-1" />
+              <span className="text-sm text-zinc-500">Загрузить фото</span>
               <input type="file" accept="image/*" className="hidden" onChange={handlePhoto} />
             </label>
           )}

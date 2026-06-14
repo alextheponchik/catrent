@@ -25,28 +25,28 @@ export default async function HomePage() {
       <section className="-mx-4 sm:-mx-6 lg:-mx-8 -mt-8 grid grid-cols-1 lg:grid-cols-2 min-h-[100dvh]">
 
         {/* Left — white, copy */}
-        <div className="flex flex-col gap-8 justify-center px-8 sm:px-12 lg:px-16 xl:px-20 py-24 bg-white">
-          <div className="inline-flex items-center gap-2 bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase w-fit">
+        <div className="flex flex-col gap-8 justify-center px-8 sm:px-12 lg:px-16 xl:px-20 py-24 bg-white dark:bg-zinc-950">
+          <div className="inline-flex items-center gap-2 bg-orange-100 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase w-fit">
             Платформа №1 в России
           </div>
 
-          <h1 className="text-6xl sm:text-7xl font-bold tracking-tight leading-none text-zinc-950">
+          <h1 className="text-6xl sm:text-7xl font-bold tracking-tight leading-none text-zinc-950 dark:text-white">
             Возьми<br />кота на<br />
             <span className="text-orange-500">выходные</span>
           </h1>
 
-          <p className="text-zinc-500 text-lg leading-relaxed max-w-[40ch]">
+          <p className="text-zinc-500 dark:text-zinc-400 text-lg leading-relaxed max-w-[40ch]">
             Находи пушистых компаньонов рядом или сдавай своего кота и помогай ему найти временную семью.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3">
             <Link href="/dashboard/renter">
-              <Button size="lg" className="bg-zinc-950 hover:bg-zinc-800 text-white h-12 px-8 text-base font-semibold gap-2 active:scale-[0.98] transition-all rounded-xl">
+              <Button size="lg" className="bg-zinc-950 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-white h-12 px-8 text-base font-semibold gap-2 active:scale-[0.98] transition-all rounded-xl">
                 Найти кота <ArrowRight className="w-5 h-5" />
               </Button>
             </Link>
             <Link href="/signup">
-              <Button size="lg" variant="outline" className="h-12 px-8 text-base font-semibold gap-2 border-zinc-200 hover:border-zinc-300 active:scale-[0.98] transition-all rounded-xl">
+              <Button size="lg" variant="outline" className="h-12 px-8 text-base font-semibold gap-2 border-zinc-200 dark:border-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-600 active:scale-[0.98] transition-all rounded-xl">
                 Сдать кота
               </Button>
             </Link>
@@ -58,7 +58,7 @@ export default async function HomePage() {
               { icon: ShieldCheck, label: 'Безопасные сделки' },
               { icon: Zap, label: 'Быстрый отклик' },
             ].map(({ icon: Icon, label }) => (
-              <div key={label} className="flex items-center gap-1.5 text-xs text-zinc-400 font-medium">
+              <div key={label} className="flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500 font-medium">
                 <Icon className="w-3.5 h-3.5 text-orange-500" />
                 {label}
               </div>
@@ -98,8 +98,8 @@ export default async function HomePage() {
       </section>
 
       {/* ── Features ── */}
-      <section className="py-16 border-b border-zinc-100">
-        <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-zinc-100">
+      <section className="py-16 border-b border-zinc-100 dark:border-zinc-800">
+        <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-zinc-100 dark:divide-zinc-800">
           {[
             { icon: CheckCircle, title: 'С любовью', text: 'Все коты проверены и любят людей' },
             { icon: ShieldCheck, title: 'Безопасно', text: 'Подробная информация о питомце и хозяине' },
@@ -110,8 +110,8 @@ export default async function HomePage() {
                 <Icon className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-zinc-900 mb-0.5">{title}</h3>
-                <p className="text-sm text-zinc-500 leading-relaxed">{text}</p>
+                <h3 className="font-semibold text-zinc-900 dark:text-white mb-0.5">{title}</h3>
+                <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">{text}</p>
               </div>
             </div>
           ))}
@@ -123,9 +123,9 @@ export default async function HomePage() {
         <div className="flex items-end justify-between mb-10">
           <div>
             <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-1.5">Каталог</p>
-            <h2 className="text-4xl font-bold text-zinc-950 tracking-tight">Доступные коты</h2>
+            <h2 className="text-4xl font-bold text-zinc-950 dark:text-white tracking-tight">Доступные коты</h2>
           </div>
-          <Link href="/dashboard/renter" className="text-zinc-400 hover:text-zinc-900 text-sm font-medium flex items-center gap-1.5 transition-colors group">
+          <Link href="/dashboard/renter" className="text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200 text-sm font-medium flex items-center gap-1.5 transition-colors group">
             Смотреть все
             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </Link>
@@ -138,12 +138,12 @@ export default async function HomePage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-24 bg-zinc-50 rounded-3xl border border-zinc-100">
-            <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
-              <CheckCircle className="w-8 h-8 text-orange-400" />
+          <div className="text-center py-24 bg-zinc-50 dark:bg-zinc-900 rounded-3xl border border-zinc-100 dark:border-zinc-800">
+            <div className="w-16 h-16 bg-orange-100 dark:bg-orange-950/40 rounded-2xl flex items-center justify-center mx-auto mb-5">
+              <CheckCircle className="w-8 h-8 text-orange-400 dark:text-orange-500" />
             </div>
-            <p className="text-zinc-500 font-semibold text-lg mb-1">Пока нет доступных котов</p>
-            <p className="text-zinc-400 text-sm mb-5">Станьте первым хозяином на платформе</p>
+            <p className="text-zinc-500 dark:text-zinc-400 font-semibold text-lg mb-1">Пока нет доступных котов</p>
+            <p className="text-zinc-400 dark:text-zinc-500 text-sm mb-5">Станьте первым хозяином на платформе</p>
             <Link href="/signup">
               <Button className="bg-orange-500 hover:bg-orange-600 text-white active:scale-[0.98] transition-all">
                 Добавить кота

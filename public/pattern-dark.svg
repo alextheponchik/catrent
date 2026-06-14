@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <g transform="translate(44,152) rotate(-12)" fill="#e4e4e7" fill-opacity="0.045">
+    <ellipse rx="12" ry="10"/>
+    <circle cx="-11" cy="-11" r="5.5"/>
+    <circle cx="-3" cy="-15" r="5.5"/>
+    <circle cx="4" cy="-15" r="5.5"/>
+    <circle cx="11" cy="-11" r="5.5"/>
+  </g>
+  <g transform="translate(158,48) rotate(22) scale(0.65)" fill="#e4e4e7" fill-opacity="0.035">
+    <ellipse rx="12" ry="10"/>
+    <circle cx="-11" cy="-11" r="5.5"/>
+    <circle cx="-3" cy="-15" r="5.5"/>
+    <circle cx="4" cy="-15" r="5.5"/>
+    <circle cx="11" cy="-11" r="5.5"/>
+  </g>
+  <g transform="translate(160,150)" fill="none" stroke="#e4e4e7" stroke-opacity="0.035" stroke-width="1.5">
+    <circle r="17"/>
+    <path d="M-11,-12 Q0,0 11,12"/>
+    <path d="M-17,0 Q0,-7 17,0"/>
+    <path d="M-7,-16 Q0,0 -7,16"/>
+  </g>
+  <g transform="translate(25,55) rotate(42) scale(0.45)" fill="#e4e4e7" fill-opacity="0.03">
+    <ellipse rx="12" ry="10"/>
+    <circle cx="-11" cy="-11" r="5.5"/>
+    <circle cx="-3" cy="-15" r="5.5"/>
+    <circle cx="4" cy="-15" r="5.5"/>
+    <circle cx="11" cy="-11" r="5.5"/>
+  </g>
+</svg>
