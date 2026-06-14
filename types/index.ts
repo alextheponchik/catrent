@@ -33,3 +33,12 @@ export interface RentalRequest {
   cats?: Cat
   profiles?: Profile
 }
+
+export interface Message {
+  id: string
+  rental_request_id: string
+  sender_id: string
+  content: string
+  created_at: string
+  profiles?: { full_name: string }
+}

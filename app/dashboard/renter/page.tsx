@@ -5,8 +5,9 @@ import { createClient } from '@/lib/supabase/client'
 import { Cat, RentalRequest } from '@/types'
 import CatCard from '@/components/CatCard'
 import FilterBar from '@/components/FilterBar'
-import { ClipboardList, Search } from 'lucide-react'
+import { ClipboardList, Search, MessageCircle } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 interface Filters { breed: string; maxAge: number; maxPrice: number; search: string }
 
@@ -113,9 +114,18 @@ export default function RenterDashboard() {
                     <p className="font-semibold text-zinc-900 truncate">{req.cats?.name}</p>
                     <p className="text-xs text-zinc-400">{req.cats?.breed} · {new Date(req.requested_date).toLocaleDateString('ru-RU')}</p>
                   </div>
-                  <span className={`text-xs px-2.5 py-1 rounded-full font-medium whitespace-nowrap ${cfg.cls}`}>
-                    {cfg.label}
-                  </span>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium whitespace-nowrap ${cfg.cls}`}>
+                      {cfg.label}
+                    </span>
+                    <Link
+                      href={`/chat/${req.id}`}
+                      className="w-8 h-8 bg-orange-50 hover:bg-orange-100 active:scale-[0.95] text-orange-500 rounded-xl flex items-center justify-center transition-all"
+                      title="Написать хозяину"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                    </Link>
+                  </div>
                 </div>
               )
             })}

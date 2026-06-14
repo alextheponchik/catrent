@@ -7,7 +7,8 @@ import CatCard from '@/components/CatCard'
 import AddCatForm from '@/components/AddCatForm'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Plus, ClipboardList, Cat as CatIcon, Check, X } from 'lucide-react'
+import { Plus, ClipboardList, Cat as CatIcon, Check, X, MessageCircle } from 'lucide-react'
+import Link from 'next/link'
 
 const statusConfig: Record<string, { label: string; cls: string }> = {
   pending:  { label: 'Ожидает',  cls: 'bg-amber-50 text-amber-700 border border-amber-100' },
@@ -168,6 +169,13 @@ export default function OwnerDashboard() {
                     <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${cfg.cls}`}>
                       {cfg.label}
                     </span>
+                    <Link
+                      href={`/chat/${req.id}`}
+                      className="w-8 h-8 bg-orange-50 hover:bg-orange-100 active:scale-[0.95] text-orange-500 rounded-xl flex items-center justify-center transition-all"
+                      title="Написать арендатору"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                    </Link>
                     {req.status === 'pending' && (
                       <>
                         <button
