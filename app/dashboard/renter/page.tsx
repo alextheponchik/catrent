@@ -5,14 +5,15 @@ import { createClient } from '@/lib/supabase/client'
 import { Cat, RentalRequest } from '@/types'
 import CatCard from '@/components/CatCard'
 import FilterBar from '@/components/FilterBar'
-import { ClipboardList } from 'lucide-react'
+import { ClipboardList, Search } from 'lucide-react'
+import Image from 'next/image'
 
 interface Filters { breed: string; maxAge: number; maxPrice: number; search: string }
 
-const statusLabel: Record<string, { label: string; color: string }> = {
-  pending: { label: 'На рассмотрении', color: 'bg-yellow-100 text-yellow-700' },
-  approved: { label: 'Одобрена', color: 'bg-green-100 text-green-700' },
-  rejected: { label: 'Отклонена', color: 'bg-red-100 text-red-700' },
+const statusConfig: Record<string, { label: string; cls: string }> = {
+  pending:  { label: 'На рассмотрении', cls: 'bg-amber-50 text-amber-700 border border-amber-100' },
+  approved: { label: 'Одобрена',        cls: 'bg-emerald-50 text-emerald-700 border border-emerald-100' },
+  rejected: { label: 'Отклонена',       cls: 'bg-red-50 text-red-600 border border-red-100' },
 }
 
 export default function RenterDashboard() {
@@ -46,50 +47,78 @@ export default function RenterDashboard() {
     init()
   }, [])
 
-  if (loading) return <div className="text-center py-16 text-gray-400">Загружаем...</div>
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        {[...Array(8)].map((_, i) => (
+          <div key={i} className="bg-white rounded-2xl border border-zinc-100 overflow-hidden animate-pulse">
+            <div className="aspect-[4/3] bg-zinc-100" />
+            <div className="p-4 space-y-2">
+              <div className="h-4 bg-zinc-100 rounded w-2/3" />
+              <div className="h-3 bg-zinc-100 rounded w-1/2" />
+            </div>
+          </div>
+        ))}
+      </div>
+    )
+  }
 
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">Каталог котов</h1>
-        <p className="text-gray-500 text-sm">{cats.length} доступных питомцев</p>
+        <p className="text-xs font-semibold text-orange-500 uppercase tracking-widest mb-1">Каталог</p>
+        <div className="flex items-end justify-between">
+          <h1 className="text-3xl font-bold text-zinc-900 tracking-tight">Доступные коты</h1>
+          <p className="text-zinc-400 text-sm">{cats.length} питомцев</p>
+        </div>
       </div>
 
       <FilterBar onFilter={fetchCats} />
 
       {cats.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
-          <div className="text-5xl mb-4">🔍</div>
-          <p className="text-gray-500">По вашему запросу котов не найдено. Попробуйте изменить фильтры.</p>
+        <div className="text-center py-20 bg-white rounded-2xl border border-zinc-100">
+          <div className="w-14 h-14 bg-zinc-50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-zinc-100">
+            <Search className="w-6 h-6 text-zinc-300" />
+          </div>
+          <p className="text-zinc-500 font-medium">По вашему запросу котов не найдено</p>
+          <p className="text-zinc-400 text-sm mt-1">Попробуйте изменить фильтры</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-12">
           {cats.map(cat => <CatCard key={cat.id} cat={cat} />)}
         </div>
       )}
 
       {requests.length > 0 && (
-        <div className="mt-4">
-          <div className="flex items-center gap-2 mb-4">
-            <ClipboardList className="w-5 h-5 text-gray-600" />
-            <h2 className="text-xl font-bold text-gray-900">Мои заявки</h2>
+        <div className="mt-8 pt-8 border-t border-zinc-100">
+          <div className="flex items-center gap-2.5 mb-6">
+            <div className="w-8 h-8 bg-zinc-100 rounded-xl flex items-center justify-center">
+              <ClipboardList className="w-4 h-4 text-zinc-500" />
+            </div>
+            <h2 className="text-xl font-bold text-zinc-900 tracking-tight">Мои заявки</h2>
           </div>
-          <div className="space-y-3">
-            {requests.map((req: any) => (
-              <div key={req.id} className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-4">
-                {req.cats?.photo_url && (
-                  <img src={req.cats.photo_url} alt={req.cats.name} className="w-12 h-12 rounded-lg object-cover" />
-                )}
-                <div className="flex-1">
-                  <p className="font-medium">{req.cats?.name}</p>
-                  <p className="text-sm text-gray-400">{req.cats?.breed}</p>
-                  <p className="text-xs text-gray-400">{new Date(req.requested_date).toLocaleDateString('ru-RU')}</p>
+          <div className="flex flex-col gap-2">
+            {requests.map((req: any) => {
+              const cfg = statusConfig[req.status] || statusConfig.pending
+              return (
+                <div key={req.id} className="bg-white rounded-2xl border border-zinc-100 p-4 flex items-center gap-4 hover:border-zinc-200 transition-colors">
+                  <div className="w-12 h-12 rounded-xl overflow-hidden bg-zinc-50 flex-shrink-0">
+                    {req.cats?.photo_url ? (
+                      <Image src={req.cats.photo_url} alt={req.cats.name} width={48} height={48} className="object-cover w-full h-full" />
+                    ) : (
+                      <div className="w-full h-full bg-zinc-100" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-zinc-900 truncate">{req.cats?.name}</p>
+                    <p className="text-xs text-zinc-400">{req.cats?.breed} · {new Date(req.requested_date).toLocaleDateString('ru-RU')}</p>
+                  </div>
+                  <span className={`text-xs px-2.5 py-1 rounded-full font-medium whitespace-nowrap ${cfg.cls}`}>
+                    {cfg.label}
+                  </span>
                 </div>
-                <span className={`text-xs px-2 py-1 rounded-lg font-medium ${statusLabel[req.status].color}`}>
-                  {statusLabel[req.status].label}
-                </span>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       )}

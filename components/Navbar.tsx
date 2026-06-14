@@ -20,6 +20,8 @@ export default function Navbar() {
       if (user) {
         const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single()
         setProfile(data)
+      } else {
+        setProfile(null)
       }
       setLoading(false)
     }

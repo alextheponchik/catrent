@@ -39,10 +39,10 @@ export default function FilterBar({ onFilter }: Props) {
   }
 
   return (
-    <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm mb-6">
+    <div className="bg-white rounded-2xl p-4 border border-zinc-100 mb-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
           <Input
             placeholder="Поиск по имени..."
             className="pl-9"
@@ -62,8 +62,8 @@ export default function FilterBar({ onFilter }: Props) {
         </Select>
 
         <div>
-          <p className="text-xs text-gray-500 mb-2">
-            Возраст до: <span className="font-medium text-gray-700">
+          <p className="text-xs text-zinc-400 mb-2">
+            Возраст до: <span className="font-medium text-zinc-700">
               {filters.maxAge >= 240 ? 'любой' : filters.maxAge >= 12
                 ? `${Math.floor(filters.maxAge / 12)} лет`
                 : `${filters.maxAge} мес.`}
@@ -78,8 +78,8 @@ export default function FilterBar({ onFilter }: Props) {
         </div>
 
         <div>
-          <p className="text-xs text-gray-500 mb-2">
-            Цена до: <span className="font-medium text-gray-700">{filters.maxPrice} ₽/день</span>
+          <p className="text-xs text-zinc-400 mb-2">
+            Цена до: <span className="font-medium text-zinc-700">{filters.maxPrice} ₽/день</span>
           </p>
           <Slider
             min={100} max={5000} step={50}
