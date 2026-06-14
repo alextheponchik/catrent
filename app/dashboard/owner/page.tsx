@@ -7,8 +7,13 @@ import CatCard from '@/components/CatCard'
 import AddCatForm from '@/components/AddCatForm'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Badge } from '@/components/ui/badge'
-import { Plus, ClipboardList } from 'lucide-react'
+import { Plus, ClipboardList, Cat as CatIcon, Check, X } from 'lucide-react'
+
+const statusConfig: Record<string, { label: string; cls: string }> = {
+  pending:  { label: 'Ожидает',  cls: 'bg-amber-50 text-amber-700 border border-amber-100' },
+  approved: { label: 'Одобрена', cls: 'bg-emerald-50 text-emerald-700 border border-emerald-100' },
+  rejected: { label: 'Отклонена', cls: 'bg-red-50 text-red-600 border border-red-100' },
+}
 
 export default function OwnerDashboard() {
   const [cats, setCats] = useState<Cat[]>([])
@@ -52,36 +57,66 @@ export default function OwnerDashboard() {
     fetchData()
   }
 
-  const statusLabel: Record<string, { label: string; color: string }> = {
-    pending: { label: 'Ожидает', color: 'bg-yellow-100 text-yellow-700' },
-    approved: { label: 'Одобрена', color: 'bg-green-100 text-green-700' },
-    rejected: { label: 'Отклонена', color: 'bg-red-100 text-red-700' },
+  if (loading) {
+    return (
+      <div>
+        <div className="flex items-center justify-between mb-8">
+          <div className="space-y-2">
+            <div className="h-7 bg-zinc-100 rounded-lg w-32 animate-pulse" />
+            <div className="h-4 bg-zinc-100 rounded w-48 animate-pulse" />
+          </div>
+          <div className="h-10 w-36 bg-zinc-100 rounded-xl animate-pulse" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="bg-zinc-50 rounded-2xl overflow-hidden animate-pulse">
+              <div className="aspect-[4/3] bg-zinc-100" />
+              <div className="p-4 space-y-2">
+                <div className="h-4 bg-zinc-100 rounded w-2/3" />
+                <div className="h-3 bg-zinc-100 rounded w-1/2" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
   }
-
-  if (loading) return <div className="text-center py-16 text-gray-400">Загружаем...</div>
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-10">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Мои коты</h1>
-          <p className="text-gray-500 text-sm mt-1">{cats.length} питомцев в вашем профиле</p>
+          <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-1">Мои питомцы</p>
+          <h1 className="text-3xl font-bold text-zinc-950 tracking-tight">
+            {cats.length > 0 ? `${cats.length} кот${cats.length === 1 ? '' : cats.length < 5 ? 'а' : 'ов'}` : 'Мои коты'}
+          </h1>
         </div>
-        <Button onClick={() => setShowForm(true)} className="bg-orange-500 hover:bg-orange-600 gap-2">
+        <Button
+          onClick={() => setShowForm(true)}
+          className="bg-orange-500 hover:bg-orange-600 active:scale-[0.97] transition-all gap-2 rounded-xl h-10 font-semibold"
+        >
           <Plus className="w-4 h-4" /> Добавить кота
         </Button>
       </div>
 
+      {/* Cats grid */}
       {cats.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-200">
-          <div className="text-5xl mb-4">🐾</div>
-          <p className="text-gray-500">У вас ещё нет котов.</p>
-          <Button onClick={() => setShowForm(true)} className="mt-4 bg-orange-500 hover:bg-orange-600">
+        <div className="text-center py-24 bg-zinc-50 rounded-3xl border-2 border-dashed border-zinc-200">
+          <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-5 border border-zinc-100 shadow-sm">
+            <CatIcon className="w-8 h-8 text-zinc-300" strokeWidth={1.5} />
+          </div>
+          <p className="text-zinc-500 font-semibold text-lg mb-1">У вас ещё нет котов</p>
+          <p className="text-zinc-400 text-sm mb-6">Добавьте питомца, чтобы получать заявки</p>
+          <Button
+            onClick={() => setShowForm(true)}
+            className="bg-orange-500 hover:bg-orange-600 active:scale-[0.97] transition-all rounded-xl font-semibold"
+          >
             Добавить первого кота
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-14">
           {cats.map(cat => (
             <CatCard
               key={cat.id} cat={cat} showActions
@@ -92,40 +127,69 @@ export default function OwnerDashboard() {
         </div>
       )}
 
+      {/* Requests */}
       {requests.length > 0 && (
-        <div>
-          <div className="flex items-center gap-2 mb-4">
-            <ClipboardList className="w-5 h-5 text-gray-600" />
-            <h2 className="text-xl font-bold text-gray-900">Заявки на аренду</h2>
+        <div className="border-t border-zinc-100 pt-10">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-9 h-9 bg-zinc-100 rounded-xl flex items-center justify-center">
+              <ClipboardList className="w-4 h-4 text-zinc-500" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-zinc-950 tracking-tight">Заявки на аренду</h2>
+              <p className="text-xs text-zinc-400">{requests.filter(r => (r as any).status === 'pending').length} ожидают решения</p>
+            </div>
           </div>
-          <div className="space-y-3">
-            {requests.map((req: any) => (
-              <div key={req.id} className="bg-white rounded-xl border border-gray-100 p-4 flex items-center justify-between gap-4">
-                <div className="flex-1">
-                  <p className="font-medium text-gray-900">
-                    {req.cats?.name} — <span className="text-gray-500 font-normal">{req.profiles?.full_name}</span>
-                  </p>
-                  {req.profiles?.phone && <p className="text-sm text-gray-400">{req.profiles.phone}</p>}
-                  {req.message && <p className="text-sm text-gray-600 mt-1 italic">«{req.message}»</p>}
-                  <p className="text-xs text-gray-400 mt-1">
-                    {new Date(req.requested_date).toLocaleDateString('ru-RU')}
-                  </p>
+
+          <div className="flex flex-col gap-2">
+            {requests.map((req: any) => {
+              const cfg = statusConfig[req.status] || statusConfig.pending
+              return (
+                <div key={req.id} className="bg-white rounded-2xl border border-zinc-100 hover:border-zinc-200 transition-colors p-5 flex items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <p className="font-semibold text-zinc-900 truncate">{req.cats?.name}</p>
+                      <span className="text-zinc-300">·</span>
+                      <p className="text-zinc-500 text-sm truncate">{req.profiles?.full_name}</p>
+                    </div>
+                    {req.profiles?.phone && (
+                      <p className="text-sm text-zinc-400 mb-1">{req.profiles.phone}</p>
+                    )}
+                    {req.message && (
+                      <p className="text-sm text-zinc-500 italic bg-zinc-50 px-3 py-1.5 rounded-lg mb-2">
+                        &laquo;{req.message}&raquo;
+                      </p>
+                    )}
+                    <p className="text-xs text-zinc-300">
+                      {new Date(req.requested_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${cfg.cls}`}>
+                      {cfg.label}
+                    </span>
+                    {req.status === 'pending' && (
+                      <>
+                        <button
+                          onClick={() => handleRequestStatus(req.id, 'approved')}
+                          className="w-8 h-8 bg-emerald-500 hover:bg-emerald-600 active:scale-[0.95] text-white rounded-xl flex items-center justify-center transition-all"
+                          title="Одобрить"
+                        >
+                          <Check className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleRequestStatus(req.id, 'rejected')}
+                          className="w-8 h-8 bg-zinc-100 hover:bg-red-50 hover:text-red-500 active:scale-[0.95] text-zinc-400 rounded-xl flex items-center justify-center transition-all"
+                          title="Отклонить"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className={`text-xs px-2 py-1 rounded-lg font-medium ${statusLabel[req.status].color}`}>
-                    {statusLabel[req.status].label}
-                  </span>
-                  {req.status === 'pending' && (
-                    <>
-                      <Button size="sm" onClick={() => handleRequestStatus(req.id, 'approved')}
-                        className="bg-green-500 hover:bg-green-600 h-7 text-xs">Одобрить</Button>
-                      <Button size="sm" variant="outline" onClick={() => handleRequestStatus(req.id, 'rejected')}
-                        className="h-7 text-xs text-red-500 border-red-200 hover:bg-red-50">Отклонить</Button>
-                    </>
-                  )}
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       )}
@@ -133,7 +197,7 @@ export default function OwnerDashboard() {
       <Dialog open={showForm} onOpenChange={setShowForm}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Добавить кота</DialogTitle>
+            <DialogTitle className="text-zinc-950">Добавить кота</DialogTitle>
           </DialogHeader>
           <AddCatForm onSuccess={() => { setShowForm(false); fetchData() }} onCancel={() => setShowForm(false)} />
         </DialogContent>
