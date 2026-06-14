@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import { useTheme } from 'next-themes'
 import { createClient } from '@/lib/supabase/client'
 import { Profile } from '@/types'
-import { Cat, LogOut, User, Sun, Moon } from 'lucide-react'
+import { Cat, LogOut, LayoutDashboard, Sun, Moon, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export default function Navbar() {
@@ -31,10 +31,7 @@ export default function Navbar() {
       setLoading(false)
     }
     getProfile()
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
-      getProfile()
-    })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => { getProfile() })
     return () => subscription.unsubscribe()
   }, [])
 
@@ -45,22 +42,22 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-100 dark:border-zinc-800 sticky top-0 z-50">
+    <nav className="sticky top-0 z-50 bg-white/80 dark:bg-violet-950/80 backdrop-blur-xl border-b border-violet-100/60 dark:border-violet-800/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-2 font-bold text-xl text-zinc-900 dark:text-white">
-            <span className="text-orange-500">
-              <Cat className="w-5 h-5" />
-            </span>
+
+          <Link href="/" className="flex items-center gap-2.5 font-bold text-xl text-violet-900 dark:text-violet-100 hover:text-violet-700 dark:hover:text-white transition-colors">
+            <div className="w-8 h-8 bg-gradient-to-br from-violet-600 to-purple-500 rounded-xl flex items-center justify-center shadow-sm shadow-violet-200 dark:shadow-violet-900/50">
+              <Cat className="w-4 h-4 text-white" strokeWidth={2} />
+            </div>
             <span>CatRent</span>
           </Link>
 
-          <div className="flex items-center gap-2">
-            {/* Theme toggle */}
+          <div className="flex items-center gap-1.5">
             {mounted && (
               <button
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="w-8 h-8 flex items-center justify-center rounded-xl text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
+                className="w-9 h-9 flex items-center justify-center rounded-xl text-violet-400 hover:text-violet-700 dark:hover:text-violet-200 hover:bg-violet-50 dark:hover:bg-violet-900/40 transition-all"
                 aria-label="Сменить тему"
               >
                 {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -70,10 +67,10 @@ export default function Navbar() {
             {loading ? null : profile ? (
               <>
                 <Link href="/dashboard">
-                  <Button variant="ghost" size="sm" className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white">
-                    <User className="w-4 h-4" />
+                  <Button variant="ghost" size="sm" className="flex items-center gap-2 text-violet-600 dark:text-violet-300 hover:text-violet-900 dark:hover:text-white hover:bg-violet-50 dark:hover:bg-violet-900/40 font-medium">
+                    <LayoutDashboard className="w-4 h-4" />
                     <span className="hidden sm:inline text-sm">{profile.full_name}</span>
-                    <span className="text-xs text-zinc-400 dark:text-zinc-600 hidden sm:inline">
+                    <span className="text-xs text-violet-300 dark:text-violet-600 hidden sm:inline">
                       · {profile.role === 'owner' ? 'Хозяин' : 'Арендатор'}
                     </span>
                   </Button>
@@ -81,7 +78,7 @@ export default function Navbar() {
                 <Button
                   variant="ghost" size="sm"
                   onClick={handleSignOut}
-                  className="text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
+                  className="text-violet-300 dark:text-violet-600 hover:text-violet-700 dark:hover:text-violet-200 hover:bg-violet-50 dark:hover:bg-violet-900/40"
                 >
                   <LogOut className="w-4 h-4" />
                 </Button>
@@ -89,10 +86,13 @@ export default function Navbar() {
             ) : (
               <>
                 <Link href="/login">
-                  <Button variant="ghost" size="sm" className="text-zinc-600 dark:text-zinc-400">Войти</Button>
+                  <Button variant="ghost" size="sm" className="text-violet-600 dark:text-violet-300 hover:text-violet-900 dark:hover:text-white hover:bg-violet-50 dark:hover:bg-violet-900/40 font-medium">
+                    Войти
+                  </Button>
                 </Link>
                 <Link href="/signup">
-                  <Button size="sm" className="bg-orange-500 hover:bg-orange-600 active:scale-[0.97] text-white transition-all">
+                  <Button size="sm" className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white shadow-sm shadow-violet-200 dark:shadow-violet-900/50 active:scale-[0.97] transition-all font-medium border-0">
+                    <Sparkles className="w-3.5 h-3.5 mr-1.5" />
                     Регистрация
                   </Button>
                 </Link>

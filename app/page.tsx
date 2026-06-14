@@ -2,11 +2,12 @@ import { createClient } from '@/lib/supabase/server'
 import CatCard from '@/components/CatCard'
 import { Cat } from '@/types'
 import Link from 'next/link'
-import { ArrowRight, CheckCircle, ShieldCheck, Zap } from 'lucide-react'
+import { ArrowRight, Search, Shield, Heart, Zap, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import Image from 'next/image'
 
 export const dynamic = 'force-dynamic'
+
+const POPULAR_BREEDS = ['Мейн-кун', 'Британец', 'Персидский', 'Сфинкс', 'Шотландский вислоухий']
 
 export default async function HomePage() {
   const supabase = await createClient()
@@ -17,116 +18,111 @@ export default async function HomePage() {
     .order('created_at', { ascending: false })
     .limit(8)
 
-  const heroPhotos = cats?.filter(c => c.photo_url).slice(0, 2) ?? []
-
   return (
     <div>
-      {/* ── Hero full-bleed ── */}
-      <section className="-mx-4 sm:-mx-6 lg:-mx-8 -mt-8 grid grid-cols-1 lg:grid-cols-2 min-h-[100dvh]">
+      {/* ── Hero ── */}
+      <section className="-mx-4 sm:-mx-6 lg:-mx-8 -mt-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-violet-700 via-violet-600 to-purple-500" />
+        <div className="absolute -top-32 -left-32 w-96 h-96 bg-violet-400/40 rounded-full blur-3xl" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-purple-400/25 rounded-full blur-3xl translate-x-1/3 -translate-y-1/4" />
+        <div className="absolute bottom-8 left-1/3 w-72 h-72 bg-indigo-400/20 rounded-full blur-3xl" />
 
-        {/* Left — white, copy */}
-        <div className="flex flex-col gap-8 justify-center px-8 sm:px-12 lg:px-16 xl:px-20 py-24 bg-white dark:bg-zinc-950">
-          <div className="inline-flex items-center gap-2 bg-orange-100 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase w-fit">
-            Платформа №1 в России
+        <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 py-28 lg:py-40">
+          <div className="inline-flex items-center gap-2 bg-white/15 text-white px-4 py-1.5 rounded-full text-xs font-semibold tracking-widest uppercase backdrop-blur-sm mb-8 border border-white/25">
+            <Star className="w-3 h-3 fill-white" />
+            Платформа №1 по аренде котов
           </div>
 
-          <h1 className="text-6xl sm:text-7xl font-bold tracking-tight leading-none text-zinc-950 dark:text-white">
-            Возьми<br />кота на<br />
-            <span className="text-orange-500">выходные</span>
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-[1.05] mb-6 max-w-3xl">
+            Найди кота<br />
+            <span className="text-violet-200">рядом с тобой</span>
           </h1>
 
-          <p className="text-zinc-500 dark:text-zinc-400 text-lg leading-relaxed max-w-[40ch]">
-            Находи пушистых компаньонов рядом или сдавай своего кота и помогай ему найти временную семью.
+          <p className="text-violet-100/90 text-lg leading-relaxed max-w-xl mb-10">
+            Арендуй пушистого друга на день, неделю или месяц. Или сдай своего кота и помоги ему найти временную семью.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3">
+          {/* Search bar */}
+          <div className="w-full max-w-2xl bg-white/95 dark:bg-violet-950/90 backdrop-blur-xl rounded-2xl p-1.5 flex items-center gap-2 shadow-2xl shadow-violet-900/30 border border-white/40">
+            <div className="flex-1 flex items-center gap-3 px-4 py-2">
+              <Search className="w-5 h-5 text-violet-400 flex-shrink-0" />
+              <input
+                type="text"
+                placeholder="Порода, имя или район..."
+                className="flex-1 bg-transparent text-violet-900 dark:text-violet-100 placeholder:text-violet-300 text-sm outline-none"
+              />
+            </div>
             <Link href="/dashboard/renter">
-              <Button size="lg" className="bg-zinc-950 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-white h-12 px-8 text-base font-semibold gap-2 active:scale-[0.98] transition-all rounded-xl">
-                Найти кота <ArrowRight className="w-5 h-5" />
-              </Button>
-            </Link>
-            <Link href="/signup">
-              <Button size="lg" variant="outline" className="h-12 px-8 text-base font-semibold gap-2 border-zinc-200 dark:border-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-600 active:scale-[0.98] transition-all rounded-xl">
-                Сдать кота
+              <Button className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white h-11 px-7 rounded-xl font-semibold text-sm shadow-sm active:scale-[0.97] transition-all border-0">
+                Найти кота
               </Button>
             </Link>
           </div>
 
-          <div className="flex flex-wrap gap-6 pt-2">
+          {/* Popular breeds */}
+          <div className="flex flex-wrap items-center justify-center gap-2 mt-5">
+            <span className="text-violet-200/70 text-xs font-medium">Популярные:</span>
+            {POPULAR_BREEDS.map(breed => (
+              <Link
+                key={breed}
+                href="/dashboard/renter"
+                className="bg-white/15 hover:bg-white/25 text-white text-xs font-medium px-3.5 py-1.5 rounded-full backdrop-blur-sm border border-white/20 transition-all cursor-pointer active:scale-[0.97]"
+              >
+                {breed}
+              </Link>
+            ))}
+          </div>
+
+          {/* Stats */}
+          <div className="flex flex-wrap items-center justify-center gap-10 mt-16">
             {[
-              { icon: CheckCircle, label: 'Проверенные хозяева' },
-              { icon: ShieldCheck, label: 'Безопасные сделки' },
-              { icon: Zap, label: 'Быстрый отклик' },
-            ].map(({ icon: Icon, label }) => (
-              <div key={label} className="flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500 font-medium">
-                <Icon className="w-3.5 h-3.5 text-orange-500" />
-                {label}
+              { value: `${cats?.length ?? 0}+`, label: 'котов онлайн' },
+              { value: '4.9★', label: 'средний рейтинг' },
+              { value: '100%', label: 'безопасных сделок' },
+            ].map(({ value, label }) => (
+              <div key={label} className="text-center">
+                <p className="text-3xl font-extrabold text-white leading-none">{value}</p>
+                <p className="text-violet-200/80 text-xs mt-1.5 font-medium">{label}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Right — orange, photos */}
-        <div className="relative hidden lg:flex items-center justify-center bg-orange-500 overflow-hidden px-12">
-          {/* Decorative blobs */}
-          <div className="absolute -top-24 -right-24 w-80 h-80 bg-orange-400 rounded-full opacity-40" />
-          <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-orange-600 rounded-full opacity-40" />
-          <div className="absolute top-1/2 right-8 -translate-y-1/2 w-32 h-32 bg-orange-300 rounded-full opacity-30" />
-
-          {heroPhotos.length >= 2 ? (
-            <div className="relative w-full max-w-sm z-10">
-              <div className="relative w-full rounded-3xl overflow-hidden shadow-2xl" style={{ height: '420px' }}>
-                <Image src={heroPhotos[0].photo_url!} alt={heroPhotos[0].name} fill className="object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                <div className="absolute bottom-4 left-4 text-white">
-                  <p className="font-bold text-lg">{heroPhotos[0].name}</p>
-                  <p className="text-sm text-white/80">{heroPhotos[0].breed}</p>
-                </div>
-              </div>
-              <div className="absolute -bottom-8 -right-8 w-48 h-48 rounded-2xl overflow-hidden shadow-2xl border-4 border-orange-500 z-20">
-                <Image src={heroPhotos[1].photo_url!} alt={heroPhotos[1].name} fill className="object-cover" />
-              </div>
-            </div>
-          ) : heroPhotos.length === 1 ? (
-            <div className="relative w-full max-w-sm z-10 rounded-3xl overflow-hidden shadow-2xl" style={{ height: '420px' }}>
-              <Image src={heroPhotos[0].photo_url!} alt={heroPhotos[0].name} fill className="object-cover" />
-            </div>
-          ) : (
-            <HeroIllustration />
-          )}
-        </div>
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-background" />
       </section>
 
       {/* ── Features ── */}
-      <section className="py-16 border-b border-zinc-100 dark:border-zinc-800">
-        <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-zinc-100 dark:divide-zinc-800">
+      <section className="py-16">
+        <div className="text-center mb-12">
+          <p className="text-xs font-bold text-violet-500 uppercase tracking-widest mb-2">Почему CatRent</p>
+          <h2 className="text-3xl font-bold text-violet-900 dark:text-white tracking-tight">Надёжно и удобно</h2>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
           {[
-            { icon: CheckCircle, title: 'С любовью', text: 'Все коты проверены и любят людей' },
-            { icon: ShieldCheck, title: 'Безопасно', text: 'Подробная информация о питомце и хозяине' },
-            { icon: Zap, title: 'Просто', text: 'Выбери, запроси и встреться с котом' },
-          ].map(({ icon: Icon, title, text }, i) => (
-            <div key={title} className={`flex gap-4 items-start py-8 ${i === 0 ? 'pr-6' : i === 2 ? 'pl-6' : 'px-6'}`}>
-              <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center flex-shrink-0">
+            { icon: Heart, title: 'С любовью', text: 'Все коты проверены и обожают людей', grad: 'from-pink-500 to-rose-400' },
+            { icon: Shield, title: 'Безопасно', text: 'Полная информация о питомце и хозяине', grad: 'from-violet-600 to-purple-500' },
+            { icon: Zap, title: 'Быстро', text: 'Заявка одобряется за несколько часов', grad: 'from-amber-500 to-orange-400' },
+          ].map(({ icon: Icon, title, text, grad }) => (
+            <div key={title} className="bg-white/80 dark:bg-violet-950/60 backdrop-blur-sm border border-violet-100 dark:border-violet-800/30 rounded-2xl p-6 hover:shadow-lg hover:shadow-violet-100/50 dark:hover:shadow-violet-900/30 hover:-translate-y-0.5 transition-all duration-200">
+              <div className={`w-11 h-11 bg-gradient-to-br ${grad} rounded-2xl flex items-center justify-center mb-4 shadow-sm`}>
                 <Icon className="w-5 h-5 text-white" />
               </div>
-              <div>
-                <h3 className="font-semibold text-zinc-900 dark:text-white mb-0.5">{title}</h3>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">{text}</p>
-              </div>
+              <h3 className="font-bold text-violet-900 dark:text-white mb-1.5">{title}</h3>
+              <p className="text-sm text-violet-500 dark:text-violet-400 leading-relaxed">{text}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* ── Catalog ── */}
-      <section className="py-16">
-        <div className="flex items-end justify-between mb-10">
+      <section className="py-8">
+        <div className="flex items-end justify-between mb-8">
           <div>
-            <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-1.5">Каталог</p>
-            <h2 className="text-4xl font-bold text-zinc-950 dark:text-white tracking-tight">Доступные коты</h2>
+            <p className="text-xs font-bold text-violet-500 uppercase tracking-widest mb-1.5">Каталог</p>
+            <h2 className="text-3xl font-bold text-violet-900 dark:text-white tracking-tight">Доступные коты</h2>
           </div>
-          <Link href="/dashboard/renter" className="text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200 text-sm font-medium flex items-center gap-1.5 transition-colors group">
-            Смотреть все
+          <Link href="/dashboard/renter" className="text-violet-400 dark:text-violet-500 hover:text-violet-700 dark:hover:text-violet-200 text-sm font-medium flex items-center gap-1.5 transition-colors group">
+            Все коты
             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </div>
@@ -138,44 +134,40 @@ export default async function HomePage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-24 bg-zinc-50 dark:bg-zinc-900 rounded-3xl border border-zinc-100 dark:border-zinc-800">
-            <div className="w-16 h-16 bg-orange-100 dark:bg-orange-950/40 rounded-2xl flex items-center justify-center mx-auto mb-5">
-              <CheckCircle className="w-8 h-8 text-orange-400 dark:text-orange-500" />
+          <div className="text-center py-24 bg-white/60 dark:bg-violet-950/40 backdrop-blur-sm rounded-3xl border border-violet-100 dark:border-violet-800/30">
+            <div className="w-16 h-16 bg-gradient-to-br from-violet-100 to-purple-50 dark:from-violet-900/40 dark:to-purple-950/40 rounded-2xl flex items-center justify-center mx-auto mb-5 border border-violet-200/50 dark:border-violet-800/30">
+              <Heart className="w-8 h-8 text-violet-300 dark:text-violet-500" />
             </div>
-            <p className="text-zinc-500 dark:text-zinc-400 font-semibold text-lg mb-1">Пока нет доступных котов</p>
-            <p className="text-zinc-400 dark:text-zinc-500 text-sm mb-5">Станьте первым хозяином на платформе</p>
+            <p className="text-violet-600 dark:text-violet-400 font-semibold text-lg mb-1">Пока нет доступных котов</p>
+            <p className="text-violet-400 dark:text-violet-500 text-sm mb-6">Станьте первым хозяином на платформе</p>
             <Link href="/signup">
-              <Button className="bg-orange-500 hover:bg-orange-600 text-white active:scale-[0.98] transition-all">
+              <Button className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white active:scale-[0.98] transition-all font-semibold border-0">
                 Добавить кота
               </Button>
             </Link>
           </div>
         )}
       </section>
-    </div>
-  )
-}
 
-function HeroIllustration() {
-  return (
-    <div className="relative z-10 flex flex-col items-center gap-4">
-      <svg viewBox="0 0 200 180" className="w-56" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="100" cy="95" r="55" fill="white" opacity="0.15" />
-        <circle cx="100" cy="90" r="42" fill="white" opacity="0.2" />
-        <path d="M68 60 L55 34 L80 54 Z" fill="white" opacity="0.8" />
-        <path d="M132 60 L145 34 L120 54 Z" fill="white" opacity="0.8" />
-        <circle cx="100" cy="90" r="38" fill="white" opacity="0.15" />
-        <circle cx="86" cy="84" r="6" fill="white" />
-        <circle cx="114" cy="84" r="6" fill="white" />
-        <ellipse cx="86" cy="85" rx="3" ry="4" fill="#1a1a1a" opacity="0.6" />
-        <ellipse cx="114" cy="85" rx="3" ry="4" fill="#1a1a1a" opacity="0.6" />
-        <path d="M92 99 Q100 107 108 99" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none" />
-        <line x1="72" y1="92" x2="55" y2="87" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.8" />
-        <line x1="72" y1="97" x2="53" y2="97" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.8" />
-        <line x1="128" y1="92" x2="145" y2="87" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.8" />
-        <line x1="128" y1="97" x2="147" y2="97" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.8" />
-      </svg>
-      <p className="text-white/70 text-sm text-center font-medium">Зарегистрируйтесь,<br />чтобы увидеть котов</p>
+      {/* ── CTA Banner ── */}
+      <section className="-mx-4 sm:-mx-6 lg:-mx-8 mt-8">
+        <div className="relative overflow-hidden bg-gradient-to-br from-violet-700 to-purple-600 px-8 sm:px-12 lg:px-16 py-16 text-center">
+          <div className="absolute -top-16 -right-16 w-64 h-64 bg-violet-500/40 rounded-full blur-3xl" />
+          <div className="absolute -bottom-16 -left-8 w-48 h-48 bg-purple-400/30 rounded-full blur-3xl" />
+          <div className="relative z-10">
+            <h2 className="text-3xl font-extrabold text-white mb-3 tracking-tight">Есть кот? Сдайте в аренду</h2>
+            <p className="text-violet-100/90 mb-8 max-w-md mx-auto leading-relaxed">
+              Помогите питомцу найти временную семью и получите дополнительный доход
+            </p>
+            <Link href="/signup">
+              <Button size="lg" className="bg-white text-violet-700 hover:bg-violet-50 active:scale-[0.97] font-bold h-12 px-8 transition-all rounded-xl shadow-lg shadow-violet-800/20 border-0">
+                Добавить кота бесплатно
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

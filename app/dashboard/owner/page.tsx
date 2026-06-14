@@ -119,14 +119,14 @@ export default function OwnerDashboard() {
     <div>
       <div className="flex items-center justify-between mb-10">
         <div>
-          <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-1">Мои питомцы</p>
+          <p className="text-xs font-bold text-violet-600 uppercase tracking-widest mb-1">Мои питомцы</p>
           <h1 className="text-3xl font-bold text-zinc-950 dark:text-white tracking-tight">
             {cats.length > 0 ? `${cats.length} кот${cats.length === 1 ? '' : cats.length < 5 ? 'а' : 'ов'}` : 'Мои коты'}
           </h1>
         </div>
         <Button
           onClick={() => setShowForm(true)}
-          className="bg-orange-500 hover:bg-orange-600 active:scale-[0.97] transition-all gap-2 rounded-xl h-10 font-semibold"
+          className="bg-violet-600 hover:bg-violet-700 active:scale-[0.97] transition-all gap-2 rounded-xl h-10 font-semibold"
         >
           <Plus className="w-4 h-4" /> Добавить кота
         </Button>
@@ -139,7 +139,7 @@ export default function OwnerDashboard() {
           </div>
           <p className="text-zinc-500 dark:text-zinc-400 font-semibold text-lg mb-1">У вас ещё нет котов</p>
           <p className="text-zinc-400 dark:text-zinc-500 text-sm mb-6">Добавьте питомца, чтобы получать заявки</p>
-          <Button onClick={() => setShowForm(true)} className="bg-orange-500 hover:bg-orange-600 active:scale-[0.97] transition-all rounded-xl font-semibold">
+          <Button onClick={() => setShowForm(true)} className="bg-violet-600 hover:bg-violet-700 active:scale-[0.97] transition-all rounded-xl font-semibold">
             Добавить первого кота
           </Button>
         </div>
@@ -195,12 +195,12 @@ export default function OwnerDashboard() {
                     <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${cfg.cls}`}>{cfg.label}</span>
                     <Link
                       href={`/chat/${req.id}`}
-                      className="relative w-8 h-8 bg-orange-50 dark:bg-orange-950/40 hover:bg-orange-100 dark:hover:bg-orange-950/60 active:scale-[0.95] text-orange-500 dark:text-orange-400 rounded-xl flex items-center justify-center transition-all"
+                      className="relative w-8 h-8 bg-violet-50 dark:bg-violet-950/40 hover:bg-violet-100 dark:hover:bg-violet-950/60 active:scale-[0.95] text-violet-600 dark:text-violet-500 rounded-xl flex items-center justify-center transition-all"
                       title="Написать арендатору"
                     >
                       <MessageCircle className="w-4 h-4" />
                       {hasUnread && (
-                        <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-orange-500 rounded-full border-2 border-white dark:border-zinc-900" />
+                        <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-violet-600 rounded-full border-2 border-white dark:border-zinc-900" />
                       )}
                     </Link>
                     {req.status === 'pending' && (

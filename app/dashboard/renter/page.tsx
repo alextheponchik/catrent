@@ -99,7 +99,7 @@ export default function RenterDashboard() {
   return (
     <div>
       <div className="mb-8">
-        <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-1">Каталог</p>
+        <p className="text-xs font-bold text-violet-600 uppercase tracking-widest mb-1">Каталог</p>
         <div className="flex items-end justify-between">
           <h1 className="text-3xl font-bold text-zinc-900 dark:text-white tracking-tight">Доступные коты</h1>
           <p className="text-zinc-400 dark:text-zinc-500 text-sm">{cats.length} питомцев</p>
@@ -155,12 +155,12 @@ export default function RenterDashboard() {
                     </span>
                     <Link
                       href={`/chat/${req.id}`}
-                      className="relative w-8 h-8 bg-orange-50 dark:bg-orange-950/40 hover:bg-orange-100 dark:hover:bg-orange-950/60 active:scale-[0.95] text-orange-500 dark:text-orange-400 rounded-xl flex items-center justify-center transition-all"
+                      className="relative w-8 h-8 bg-violet-50 dark:bg-violet-950/40 hover:bg-violet-100 dark:hover:bg-violet-950/60 active:scale-[0.95] text-violet-600 dark:text-violet-500 rounded-xl flex items-center justify-center transition-all"
                       title="Написать хозяину"
                     >
                       <MessageCircle className="w-4 h-4" />
                       {hasUnread && (
-                        <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-orange-500 rounded-full border-2 border-white dark:border-zinc-900" />
+                        <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-violet-600 rounded-full border-2 border-white dark:border-zinc-900" />
                       )}
                     </Link>
                   </div>

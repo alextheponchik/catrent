@@ -144,7 +144,7 @@ export default function AddCatForm({ onSuccess, onCancel, editCat }: Props) {
               </button>
             </div>
           ) : (
-            <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-zinc-200 dark:border-zinc-700 rounded-xl cursor-pointer hover:border-orange-300 hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors">
+            <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-zinc-200 dark:border-zinc-700 rounded-xl cursor-pointer hover:border-orange-300 hover:bg-violet-50 dark:hover:bg-orange-950/20 transition-colors">
               <Upload className="w-6 h-6 text-zinc-400 mb-1" />
               <span className="text-sm text-zinc-500">Загрузить фото</span>
               <input type="file" accept="image/*" className="hidden" onChange={handlePhoto} />
@@ -157,7 +157,7 @@ export default function AddCatForm({ onSuccess, onCancel, editCat }: Props) {
 
       <div className="flex gap-3 pt-2">
         <Button type="button" variant="outline" onClick={onCancel} className="flex-1">Отмена</Button>
-        <Button type="submit" disabled={loading} className="flex-1 bg-orange-500 hover:bg-orange-600">
+        <Button type="submit" disabled={loading} className="flex-1 bg-violet-600 hover:bg-violet-700">
           {loading ? 'Сохраняем...' : editCat ? 'Сохранить' : 'Добавить кота'}
         </Button>
       </div>
