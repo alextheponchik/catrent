@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { ArrowRight, Heart, Shield, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   const supabase = await createClient()
