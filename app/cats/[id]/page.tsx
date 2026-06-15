@@ -89,7 +89,7 @@ export default function CatPage() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <Link href="/" className="inline-flex items-center gap-1.5 text-teal-400 dark:text-teal-500 hover:text-teal-700 dark:hover:text-teal-300 mb-6 text-sm transition-colors font-medium">
+      <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-teal-400 dark:text-teal-500 hover:text-teal-700 dark:hover:text-teal-300 mb-6 text-sm transition-colors font-medium">
         <ArrowLeft className="w-4 h-4" /> Назад к каталогу
       </Link>
 
